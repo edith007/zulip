@@ -69,6 +69,9 @@ function is_overlay_hash(hash) {
         "organization",
         "invite",
         "recent_topics",
+        "keyboard-shortcuts",
+        "message-formatting",
+        "search-operators",
     ];
     const main_hash = hash_util.get_hash_category(hash);
 
@@ -113,15 +116,6 @@ function do_hashchange_normal(from_reload) {
         case "":
         case "#":
             activate_home_tab();
-            break;
-        case "#keyboard-shortcuts":
-            info_overlay.show("keyboard-shortcuts");
-            break;
-        case "#message-formatting":
-            info_overlay.show("message-formatting");
-            break;
-        case "#search-operators":
-            info_overlay.show("search-operators");
             break;
         case "#drafts":
         case "#invite":
@@ -221,6 +215,20 @@ function do_hashchange_overlay(old_hash) {
 
     if (base === "recent_topics") {
         recent_topics.launch();
+        return;
+    }
+    if (base === "keyboard-shortcuts") {
+        info_overlay.show("keyboard-shortcuts");
+        return;
+    }
+
+    if (base === "message-formatting") {
+        info_overlay.show("message-formatting");
+        return;
+    }
+
+    if (base === "search-operators") {
+        info_overlay.show("search-operators");
         return;
     }
 }

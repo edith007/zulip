@@ -37,7 +37,7 @@ let user_uses_keyboard = false;
 function set_default_focus() {
     // If at any point we are confused about the currently
     // focused element, we switch focus to search.
-    current_focus_elem = $("#recent_topics_search");
+    current_focus_elem = $("#recent_topics_filter_buttons").find("[data-filter='participated']");
     current_focus_elem.trigger("focus");
 }
 
@@ -73,13 +73,17 @@ function revive_current_focus() {
     }
 
     const filter_button = current_focus_elem.data("filter");
-    if (!filter_button) {
-        set_default_focus();
-    } else {
+    if (filter_button) {
         current_focus_elem = $("#recent_topics_filter_buttons").find(
             "[data-filter='" + filter_button + "']",
         );
+<<<<<<< HEAD
         current_focus_elem.trigger("focus");
+=======
+        current_focus_elem.focus();
+    } else {
+        $("#recent_topics_search").focus();
+>>>>>>> recent_topics: Set default focus to Participated button.
     }
     return true;
 }

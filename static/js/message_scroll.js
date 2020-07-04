@@ -113,7 +113,7 @@ exports.actively_scrolling = function () {
 exports.scroll_finished = function () {
     actively_scrolling = false;
 
-    if (!$("#home").hasClass("active")) {
+    if (!$("#message_feed_container").hasClass("active")) {
         return;
     }
 

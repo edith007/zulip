@@ -414,6 +414,7 @@ zrequire("message_events");
 
 run_test("insert_message", () => {
     const helper = test_helper();
+    set_global((recent_topics.is_visible = () => false));
 
     const new_message = {
         sender_id: isaac.user_id,

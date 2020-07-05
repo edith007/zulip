@@ -18,6 +18,12 @@ function get_formatted_sub_count(current_stream) {
 
 function make_tab_data(filter) {
     const tab_data = {};
+    if (recent_topics.is_visible()) {
+        return {
+            title: i18n.t("Recent topics (beta)"),
+            icon: "clock-o",
+        };
+    }
     if (filter === undefined) {
         return {
             title: i18n.t("All messages"),

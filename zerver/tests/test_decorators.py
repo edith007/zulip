@@ -556,10 +556,54 @@ class DecoratorLoggingTestCase(ZulipTestCase):
             result, "Invalid authorization header for basic auth", status_code=401
         )
 
-        result = self.client_post("/api/v1/external/zendesk", {})
-        self.assert_json_error(
-            result, "Missing authorization header for basic auth", status_code=401
+        with self.assertLogs("zerver.middleware.json_error_handler", "ERROR"):
+            with self.assertLogs("django.request", "ERROR") as error_log:
+                result = self.client_post("/api/v1/external/zendesk", {})
+            self.assertTrue(
+                "ERROR:django.request:Internal Server Error: /api/v1/external/zendesk"
+                in error_log.output[0]
+            )
+
+
+class OAuthTest(ZulipTestCase):
+    def test_validate_oauth_key(self) -> Any:
+        iago = self.example_user("iago")
+        self.login_user(iago)
+        # Let iago create a new OAuth application
+        result = self.client_post(
+            "/o/applications/register/",
+            {
+                "name": "zulip",
+                "client_id": "test",
+                "initial-client_id": "test",
+                "client_secret": "test",
+                "initial-client_secret": "test",
+                "client_type": "confidential",
+                "authorization_grant_type": "authorization-code",
+                "redirect_uris": "http://localhost:3000/o/callback",
+            },
         )
+        self.assertEqual(result.url, "/o/applications/1/")
+        # TODO: Assert the values of the application form
+
+        self.logout()
+        hamlet = self.example_user("hamlet")
+
+        result = self.client_post(
+            "/o/authorize/",
+            {
+                "redirect_uris": "http://localhost:3000/o/callback",
+                "scope": "write",
+                "client_id": "test",
+                "state": "",
+                "response_type": "code",
+                "code_challenge": "",
+                "code_challenge_method": "",
+                "allow": "Authorize",
+            },
+        )
+        self.login_user(hamlet)
+        self.assertEqual(result.url, "/accounts/login/?next=/o/authorize/")
 
 
 class RateLimitTestCase(ZulipTestCase):

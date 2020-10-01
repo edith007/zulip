@@ -363,6 +363,10 @@ django-formtools==2.2 \
 django-otp==1.0.2 \
     --hash=sha256:8ba5ab9bd2738c7321376c349d7cce49cf4404e79f6804e0a3cc462a91728e18 \
     --hash=sha256:f523fb9dec420f28a29d3e2ad72ac06f64588956ed4f2b5b430d8e957ebb8287
+    # via -r requirements/common.in
+django-oauth-toolkit==1.3.3 \
+    --hash=sha256:48a45d9ec23b50646b14b4b93988bd0d35ad5cf933edfcb833a8527f86329f28 \
+    --hash=sha256:a67ab96089b96540e34dc8d1ee6e6305a80ee01a36f7688108cd94b77406bdd3 \
     # via django-two-factor-auth
 django-phonenumber-field==3.0.1 \
     --hash=sha256:1ab19f723928582fed412bd9844221fa4ff466276d8526b8b4a9913ee1487c5e \
@@ -391,6 +395,7 @@ django[argon2]==3.1.6 \
     #   django-auth-ldap
     #   django-bitfield
     #   django-formtools
+    #   django-oauth-toolkit
     #   django-otp
     #   django-phonenumber-field
     #   django-sendfile2
@@ -1314,6 +1319,8 @@ requests[security]==2.25.1 \
     --hash=sha256:c210084e36a42ae6b9219e00e48287def368a26d03a048ddad7bfee44f75871e
     # via
     #   -r requirements/common.in
+    #   django-oauth-toolkit
+    #   docker
     #   matrix-client
     #   moto
     #   premailer

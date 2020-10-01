@@ -183,3 +183,7 @@ tlds
 
 # Unicode Collation Algorithm for sorting multilingual strings
 pyuca
+
+# Needed to make Zulip server act as OAuth2 Provider
+django-oauth-toolkit
+

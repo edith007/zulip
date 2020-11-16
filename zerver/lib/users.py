@@ -283,7 +283,7 @@ def get_accounts_for_email(email: str) -> List[Dict[str, Optional[str]]]:
     return [
         {
             "realm_name": profile.realm.name,
-            "string_id": profile.realm.string_id,
+            "realm_id": profile.realm.id,
             "full_name": profile.full_name,
             "avatar": avatar_url(profile),
         }

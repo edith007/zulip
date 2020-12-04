@@ -596,7 +596,7 @@ Output:
         timezone: str = "",
         realm_in_root_domain: Optional[str] = None,
         default_stream_groups: Sequence[str] = [],
-        source_realm: str = "",
+        source_realm_id: str = "",
         key: Optional[str] = None,
         **kwargs: Any,
     ) -> HttpResponse:
@@ -620,7 +620,7 @@ Output:
             "terms": True,
             "from_confirmation": from_confirmation,
             "default_stream_group": default_stream_groups,
-            "source_realm": source_realm,
+            "source_realm_id": source_realm_id,
         }
         if realm_in_root_domain is not None:
             payload["realm_in_root_domain"] = realm_in_root_domain

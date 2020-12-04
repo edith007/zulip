@@ -964,7 +964,7 @@ class TestSupportEndpoint(ZulipTestCase):
             result = self.client_post(
                 "/activity/support", {"realm_id": f"{lear_realm.id}", "status": "active"}
             )
-            m.assert_called_once_with(lear_realm)
+            m.assert_called_once_with(lear_realm, acting_user=self.example_user("iago"))
             self.assert_in_success_response(
                 ["Realm reactivation email sent to admins of lear"], result
             )

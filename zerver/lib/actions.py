@@ -4017,7 +4017,9 @@ def do_change_logo_source(
     send_event(realm, event, active_user_ids(realm.id))
 
 
-def do_change_plan_type(realm: Realm, plan_type: int) -> None:
+def do_change_plan_type(
+    realm: Realm, plan_type: int, acting_user: Optional[UserProfile] = None
+) -> None:
     old_value = realm.plan_type
     realm.plan_type = plan_type
     realm.save(update_fields=["plan_type"])
@@ -4025,6 +4027,7 @@ def do_change_plan_type(realm: Realm, plan_type: int) -> None:
         event_type=RealmAuditLog.REALM_PLAN_TYPE_CHANGED,
         realm=realm,
         event_time=timezone_now(),
+        acting_user=acting_user,
         extra_data={"old_value": old_value, "new_value": plan_type},
     )
 

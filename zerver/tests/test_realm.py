@@ -28,6 +28,7 @@ from zerver.models import (
     CustomProfileField,
     Message,
     Realm,
+    RealmAuditLog,
     ScheduledEmail,
     UserMessage,
     UserProfile,
@@ -695,35 +696,42 @@ class RealmTest(ZulipTestCase):
 
     def test_change_plan_type(self) -> None:
         realm = get_realm("zulip")
+        iago = self.example_user("iago")
         self.assertEqual(realm.plan_type, Realm.SELF_HOSTED)
         self.assertEqual(realm.max_invites, settings.INVITES_DEFAULT_REALM_DAILY_MAX)
         self.assertEqual(realm.message_visibility_limit, None)
         self.assertEqual(realm.upload_quota_gb, None)
 
-        do_change_plan_type(realm, Realm.STANDARD)
+        do_change_plan_type(realm, Realm.STANDARD, acting_user=iago)
         realm = get_realm("zulip")
+        realm_audit_log = RealmAuditLog.objects.filter(
+            event_type=RealmAuditLog.REALM_PLAN_TYPE_CHANGED
+        ).last()
+        expected_extra_data = {"old_value": Realm.SELF_HOSTED, "new_value": Realm.STANDARD}
+        self.assertEqual(realm_audit_log.extra_data, str(expected_extra_data))
+        self.assertEqual(realm_audit_log.acting_user, iago)
         self.assertEqual(realm.plan_type, Realm.STANDARD)
         self.assertEqual(realm.max_invites, Realm.INVITES_STANDARD_REALM_DAILY_MAX)
         self.assertEqual(realm.message_visibility_limit, None)
         self.assertEqual(realm.upload_quota_gb, Realm.UPLOAD_QUOTA_STANDARD)
 
-        do_change_plan_type(realm, Realm.LIMITED)
+        do_change_plan_type(realm, Realm.LIMITED, acting_user=iago)
         realm = get_realm("zulip")
         self.assertEqual(realm.plan_type, Realm.LIMITED)
         self.assertEqual(realm.max_invites, settings.INVITES_DEFAULT_REALM_DAILY_MAX)
         self.assertEqual(realm.message_visibility_limit, Realm.MESSAGE_VISIBILITY_LIMITED)
         self.assertEqual(realm.upload_quota_gb, Realm.UPLOAD_QUOTA_LIMITED)
 
-        do_change_plan_type(realm, Realm.STANDARD_FREE)
+        do_change_plan_type(realm, Realm.STANDARD_FREE, acting_user=iago)
         realm = get_realm("zulip")
         self.assertEqual(realm.plan_type, Realm.STANDARD_FREE)
         self.assertEqual(realm.max_invites, Realm.INVITES_STANDARD_REALM_DAILY_MAX)
         self.assertEqual(realm.message_visibility_limit, None)
         self.assertEqual(realm.upload_quota_gb, Realm.UPLOAD_QUOTA_STANDARD)
 
-        do_change_plan_type(realm, Realm.LIMITED)
+        do_change_plan_type(realm, Realm.LIMITED, acting_user=iago)
 
-        do_change_plan_type(realm, Realm.SELF_HOSTED)
+        do_change_plan_type(realm, Realm.SELF_HOSTED, acting_user=iago)
         self.assertEqual(realm.plan_type, Realm.SELF_HOSTED)
         self.assertEqual(realm.max_invites, settings.INVITES_DEFAULT_REALM_DAILY_MAX)
         self.assertEqual(realm.message_visibility_limit, None)

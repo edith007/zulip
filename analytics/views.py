@@ -1336,7 +1336,7 @@ def support(request: HttpRequest) -> HttpResponse:
                 context["success_message"] = f"{realm.string_id} is no longer pending sponsorship."
         elif request.POST.get("approve_sponsorship") is not None:
             if request.POST.get("approve_sponsorship") == "approve_sponsorship":
-                approve_sponsorship(realm)
+                approve_sponsorship(realm, acting_user=request.user)
                 context["success_message"] = f"Sponsorship approved for {realm.string_id}"
         elif request.POST.get("downgrade_method", None) is not None:
             downgrade_method = request.POST.get("downgrade_method")

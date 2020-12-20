@@ -13,6 +13,7 @@ from django.utils.timezone import now as timezone_now
 from zerver.lib.actions import (
     create_users,
     do_change_can_create_users,
+    do_change_user_default_language,
     do_change_user_role,
     do_create_user,
     do_deactivate_user,
@@ -1314,6 +1315,13 @@ class UserProfileTest(ZulipTestCase):
             self.client_get(f"/json/users/{iago.id}/subscriptions/{stream.id}").content
         )
         self.assertTrue(result["is_subscribed"])
+
+    def test_do_change_user_default_language(self) -> None:
+        iago = self.example_user("iago")
+        new_default_language = "de"
+        self.assertEqual(iago.default_language, "en")
+        do_change_user_default_language(iago, new_default_language)
+        self.assertEqual(iago.default_language, new_default_language)
 
 
 class ActivateTest(ZulipTestCase):

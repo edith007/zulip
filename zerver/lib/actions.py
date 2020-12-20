@@ -628,6 +628,7 @@ def do_create_user(
     tos_version: Optional[str] = None,
     timezone: str = "",
     avatar_source: str = UserProfile.AVATAR_FROM_GRAVATAR,
+    default_language: str = "en",
     default_sending_stream: Optional[Stream] = None,
     default_events_register_stream: Optional[Stream] = None,
     default_all_public_streams: Optional[bool] = None,
@@ -650,6 +651,7 @@ def do_create_user(
         tos_version=tos_version,
         timezone=timezone,
         avatar_source=avatar_source,
+        default_language=default_language,
         default_sending_stream=default_sending_stream,
         default_events_register_stream=default_events_register_stream,
         default_all_public_streams=default_all_public_streams,
@@ -1050,6 +1052,16 @@ def do_change_realm_subdomain(realm: Realm, new_subdomain: str) -> None:
     placeholder_realm = do_create_realm(old_subdomain, "placeholder-realm")
     do_deactivate_realm(placeholder_realm)
     do_add_deactivated_redirect(placeholder_realm, realm.uri)
+
+
+def do_set_realm_default_language(realm: Realm, default_language: str) -> None:
+    realm.default_language = default_language
+    realm.save(update_fields=["default_language"])
+
+
+def do_change_user_default_language(user_profile: UserProfile, default_language: str) -> None:
+    user_profile.default_language = default_language
+    user_profile.save(update_fields=["default_language"])
 
 
 def do_add_deactivated_redirect(realm: Realm, redirect_url: str) -> None:

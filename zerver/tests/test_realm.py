@@ -16,6 +16,7 @@ from zerver.lib.actions import (
     do_deactivate_stream,
     do_scrub_realm,
     do_send_realm_reactivation_email,
+    do_set_realm_default_language,
     do_set_realm_property,
 )
 from zerver.lib.realm_description import get_realm_rendered_description, get_realm_text_description
@@ -255,6 +256,13 @@ class RealmTest(ZulipTestCase):
         do_add_deactivated_redirect(realm, new_redirect_url)
         self.assertEqual(realm.deactivated_redirect, new_redirect_url)
         self.assertNotEqual(realm.deactivated_redirect, redirect_url)
+
+    def test_do_set_realm_default_language(self) -> None:
+        realm = get_realm("zulip")
+        new_default_language = "de"
+        self.assertTrue(realm.default_language, "en")
+        do_set_realm_default_language(realm, new_default_language)
+        self.assertEqual(realm.default_language, new_default_language)
 
     def test_realm_reactivation_link(self) -> None:
         realm = get_realm("zulip")

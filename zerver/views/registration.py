@@ -40,8 +40,10 @@ from zerver.lib.actions import (
     do_activate_user,
     do_change_full_name,
     do_change_password,
+    do_change_user_default_language,
     do_create_realm,
     do_create_user,
+    do_set_realm_default_language,
     do_set_user_display_setting,
     lookup_default_stream_groups,
 )
@@ -295,11 +297,16 @@ def accounts_register(request: HttpRequest) -> HttpResponse:
             # create an unusable password).
             password = None
 
+        default_language = "en"
+        if request.META.get("HTTP_ACCEPT_LANGUAGE") is not None:
+            default_language = request.META.get("HTTP_ACCEPT_LANGUAGE").split(",")[0]
+
         if realm_creation:
             string_id = form.cleaned_data["realm_subdomain"]
             realm_name = form.cleaned_data["realm_name"]
             realm = do_create_realm(string_id, realm_name)
             setup_realm_internal_bots(realm)
+            do_set_realm_default_language(realm, default_language)
         assert realm is not None
 
         full_name = form.cleaned_data["full_name"]
@@ -380,7 +387,9 @@ def accounts_register(request: HttpRequest) -> HttpResponse:
                     redirect_url = add_query_to_redirect_url(view_url, query)
                     return HttpResponseRedirect(redirect_url)
             elif not realm_creation:
-                # Since we'll have created a user, we now just log them in.
+                # Since we'll have created a user, we now just update their
+                # default language and log them in.
+                do_change_user_default_language(user_profile, default_language)
                 return login_and_go_to_home(request, user_profile)
             else:
                 # With realm_creation=True, we're going to return further down,
@@ -393,6 +402,7 @@ def accounts_register(request: HttpRequest) -> HttpResponse:
             do_change_password(user_profile, password)
             do_change_full_name(user_profile, full_name, user_profile)
             do_set_user_display_setting(user_profile, "timezone", timezone)
+            do_set_user_display_setting(user_profile, "default_language", default_language)
             # TODO: When we clean up the `do_activate_user` code path,
             # make it respect invited_as_admin / is_realm_admin.
 
@@ -407,6 +417,7 @@ def accounts_register(request: HttpRequest) -> HttpResponse:
                 tos_version=settings.TOS_VERSION,
                 timezone=timezone,
                 default_stream_groups=default_stream_groups,
+                default_language=default_language,
                 source_profile=source_profile,
                 realm_creation=realm_creation,
                 acting_user=None,

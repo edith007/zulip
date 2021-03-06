@@ -30,6 +30,10 @@ export function maybe_disable_widgets() {
         return;
     }
 
+    if (page_params.realm_plan_type !== 4) {
+        $("#id_realm_customer_showcase_policy").prop("disabled", true);
+    }
+
     $(".organization-box [data-name='auth-methods']")
         .find("input, button, select, checked")
         .prop("disabled", true);
@@ -733,6 +737,11 @@ export function build_page() {
 
     function get_complete_data_for_subsection(subsection) {
         let data = {};
+
+        if (subsection === "pub_listing") {
+            const customer_showcase_value = $("#id_realm_customer_showcase_policy").val();
+            data.customer_showcase_policy = customer_showcase_value;
+        }
 
         if (subsection === "msg_editing") {
             const edit_limit_setting_value = $("#id_realm_msg_edit_limit_setting").val();

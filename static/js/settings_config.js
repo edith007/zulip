@@ -233,6 +233,17 @@ export const msg_edit_limit_dropdown_values = time_limit_dropdown_values;
 export const msg_delete_limit_dropdown_values = time_limit_dropdown_values;
 export const retain_message_forever = -1;
 
+export const customer_showcase_policy_values = {
+    hidden: {
+        code: 1,
+        description: i18n.t("Hidden"),
+    },
+    visible: {
+        code: 2,
+        description: i18n.t("Visible"),
+    },
+};
+
 export const user_role_values = {
     guest: {
         code: 600,
